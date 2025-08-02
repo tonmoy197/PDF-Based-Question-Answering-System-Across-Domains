@@ -1,27 +1,30 @@
-# PDF-Based Question Answering (Scientific Domain)
+# PDF-Based Question Answering (Scientific & Biomedical Domains)
 
-This project implements a Question Answering (QA) system for **scientific domain PDFs** using the `SciBERT` model. It allows users to extract answers from long and complex documents by splitting and processing the content intelligently.
+This project implements a Question Answering (QA) system for **scientific** and **biomedical** domain PDFs using transformer-based models like **SciBERT** and **Bio-ClinicalBERT**. It handles long documents, creates curated QA datasets, and extracts accurate answers from complex texts.
 
 ---
 
 ## 📌 Features
 
-- Domain-specific QA system for **scientific literature**.
-- Utilizes the pre-trained **SciBERT** model.
-- Handles long PDFs by chunking text into model-compatible sizes.
-- Includes curated dataset creation for accurate evaluation.
+- Domain-specific QA on **scientific** and **biomedical** literature.
+- Utilizes **SciBERT** and **Bio-ClinicalBERT** from Hugging Face.
+- Supports long PDF inputs by chunking into model-compatible sizes.
+- Curated QA dataset creation for reliable evaluation.
+- Modular scripts for dataset creation and inference.
 
 ---
 
-## 🚀 Approach
+## 🚀 Approaches
 
-- Used [`allenai/scibert_scivocab_uncased`](https://huggingface.co/allenai/scibert_scivocab_uncased) for fine-tuned question answering tasks.
-- Processed raw PDF content by extracting text and breaking it into 512-token chunks.
-- QA performed on each chunk, with final answer selected based on highest model confidence (start score).
-- Constructed a structured dataset with the following fields:
-  - `question`
-  - `context`
-  - `ground truth`
+### Scientific Domain
+- Used [`allenai/scibert_scivocab_uncased`](https://huggingface.co/allenai/scibert_scivocab_uncased).
+- Focused on scientific PDFs (research papers, articles).
+- Extracted question-context-answer triplets from PDFs.
+
+### Biomedical Domain
+- Used [`emilyalsentzer/Bio_ClinicalBERT`](https://huggingface.co/emilyalsentzer/Bio_ClinicalBERT).
+- Applied to biomedical PDFs (clinical notes, medical publications).
+- Customized for handling domain-specific terminology and structure.
 
 ---
 
@@ -29,12 +32,19 @@ This project implements a Question Answering (QA) system for **scientific domain
 
 ### 1. **512 Token Limit**
 
-- **Issue:** SciBERT (like BERT) can only process 512 tokens at once.
-- **Solution:** Used a custom function `expand_split_sentences()` to split long texts into overlapping chunks of 512 tokens for inference.
+- **Problem:** Transformer models like BERT can only process 512 tokens.
+- **Solution:** 
+  - Implemented `expand_split_sentences()` to split PDF text into overlapping chunks.
+  - Performed QA on each chunk and selected the answer with the highest start score.
 
-### 2. **Loss of Context**
+### 2. **Loss of Context in Long Documents**
 
-- **Issue:** Splitting text can reduce semantic coherence.
-- **Solution:** Created a custom dataset to preserve meaningful context for QA:
-  - Ensures evaluation aligns with intended answers even for complex scientific documents.
+- **Problem:** Chunking may break contextual continuity in complex documents.
+- **Solution:** 
+  - Created curated QA datasets with:
+    - `question`
+    - `context`
+    - `ground truth`
+  - This structure ensures meaningful evaluation of the QA pipeline.
 
+---
