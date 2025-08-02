@@ -1,56 +1,40 @@
-# PDF-Based Question Answering
+# PDF-Based Question Answering (Scientific Domain)
 
-This project implements a Question Answering (QA) system on domain-specific PDF documents using various transformer-based models.
-
-## 📌 Features
-
-- QA system for **financial**, **scientific**, and **biomedical** domains.
-- Uses fine-tuned transformer models from Hugging Face.
-- Chunk-based processing to handle long PDF inputs.
-- Curated datasets for accurate evaluation.
-- Cross-domain model evaluation.
+This project implements a Question Answering (QA) system for **scientific domain PDFs** using the `SciBERT` model. It allows users to extract answers from long and complex documents by splitting and processing the content intelligently.
 
 ---
 
-## 🚀 Approaches
+## 📌 Features
 
-- **Financial Domain**
-  - Fine-tuned `BERT-base`, `BERT-large`, and `DistilBERT` (on SQuAD) for PDF QA.
+- Domain-specific QA system for **scientific literature**.
+- Utilizes the pre-trained **SciBERT** model.
+- Handles long PDFs by chunking text into model-compatible sizes.
+- Includes curated dataset creation for accurate evaluation.
 
-- **Scientific Domain**
-  - Used `SciBERT` for scientific literature in PDF format.
+---
 
-- **Biomedical Domain**
-  - Used `Bio-ClinicalBERT` for QA on biomedical PDFs.
+## 🚀 Approach
 
-- **Dataset Creation**
-  - Custom datasets prepared from PDFs using the `Make_dataset_from_PDFs.ipynb` notebook.
-
-- **Evaluation**
-  - Cross-domain testing to assess model generalization.
+- Used [`allenai/scibert_scivocab_uncased`](https://huggingface.co/allenai/scibert_scivocab_uncased) for fine-tuned question answering tasks.
+- Processed raw PDF content by extracting text and breaking it into 512-token chunks.
+- QA performed on each chunk, with final answer selected based on highest model confidence (start score).
+- Constructed a structured dataset with the following fields:
+  - `question`
+  - `context`
+  - `ground truth`
 
 ---
 
 ## ⚠️ Challenges & Solutions
 
-### 1. Token Limit (512 tokens)
+### 1. **512 Token Limit**
 
-- **Problem:** BERT-based models can only process up to 512 tokens.
-- **Solution:** 
-  - Split long PDF texts into 512-token chunks using the `expand_split_sentences` function.
-  - Run the QA model on each chunk.
-  - Select the final answer based on the maximum start score across chunks.
+- **Issue:** SciBERT (like BERT) can only process 512 tokens at once.
+- **Solution:** Used a custom function `expand_split_sentences()` to split long texts into overlapping chunks of 512 tokens for inference.
 
-### 2. Context Loss
+### 2. **Loss of Context**
 
-- **Problem:** Splitting can break context in complex documents.
-- **Solution:**
-  - Curated structured QA datasets with:
-    - `question`
-    - `context`
-    - `ground truth`
-  - Enables better and more reliable evaluation of the QA pipeline.
-
----
-
+- **Issue:** Splitting text can reduce semantic coherence.
+- **Solution:** Created a custom dataset to preserve meaningful context for QA:
+  - Ensures evaluation aligns with intended answers even for complex scientific documents.
 
